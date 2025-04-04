@@ -1,2 +1,4 @@
-﻿  main.cpp
+﻿  Parser.cpp
+  main.cpp
+  Generating Code...
   Parser.vcxproj -> D:\Code\Parser\x64\Debug\Parser.exe

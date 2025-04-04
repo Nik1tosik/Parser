@@ -7,11 +7,14 @@ struct Parser
 	int i;
 
 	bool isNumber(string s);
+	bool isWord(string s);
 	void getLexeme();
 
-	void S(Node& n);
-	void S1(Node& n);
-	void T(Node& n);
+	void Function(Node& n);
+	void Type(Node& n);
+	void Var(Node& n);
+	void Return(Node& n);
+	void Id(Node& n);
 
 	Parser(string inp) : input(inp), i(0) {}
 	Node parse();

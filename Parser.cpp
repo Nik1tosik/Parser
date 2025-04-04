@@ -2,87 +2,120 @@
 
 bool Parser::isNumber(string s)
 {
-    int state = 0;
-    for(char c : s)
+    if(!('1' <= s[0] && s[0] <= '9'))
     {
-        if(!isdigit(c))
+        return false;
+    }
+    for(int i = 1; i < s.size(); ++i)
+    {
+        if(!(('0' <= s[i] && s[i] <= '9')))
+        {
             return false;
+        }
+    }
+    return true;
+}
+
+bool Parser::isWord(string s)
+{
+    if('0' <= s[0] && s[0] <= '9')
+    {
+        return false;
+    }
+    for(int i = 1; i < s.size(); ++i)
+    {
+        if(!(('0' <= s[i] && s[i] <= '9')
+           || ('a' <= s[i] && s[i] <= 'z')
+           || ('A' <= s[i] && s[i] <= 'Z') || s[i] == '_'))
+        {
+            return false;
+        }
     }
     return true;
 }
 
 void Parser::getLexeme()
 {
+    while(input[i] == ' ')
+    {
+        ++i;
+    }
     if(i >= input.size())
     {
         lexeme = "#";
         return;
     }
+
     lexeme = "";
-    if(input[i] == '+')
+    while(i < input.size() && !(input[i] == ' '))
     {
         lexeme += input[i];
         ++i;
     }
-    else
-    {
-        while(i < input.size() && !(input[i] == '+'))
-        {
-            lexeme += input[i];
-            ++i;
-        }
-    }
 }
 
-void Parser::S(Node& n)
+void Parser::Function(Node& n)
 {
-    if(isNumber(lexeme))
+    if(lexeme == "Function")
     {
-        // S -> TS1
-        n.addSon("T");
-        T(n.children[0]);
-        n.addSon("S1");
-        S1(n.children[1]);
-    }
-    else throw exception("Wrong input");
-}
-
-void Parser::S1(Node& n)
-{
-    if(lexeme == "+")
-    {
-        // S1 -> +TS1
-        n.addSon("+");
+        // Function -> Type Var Return
+        n.addSon("Type");
         getLexeme();
-        n.addSon("T");
-        T(n.children[1]);
-        n.addSon("S1");
-        S1(n.children[2]);
+        Type(n.children[0]);
+
+        n.addSon("Var");
+        Var(n.children[1]);
+
+        n.addSon("Return");
+        Return(n.children[2]);
     }
-    else if(lexeme == "#")
-    {
-        // S1 -> eps
-        n.addSon("eps");
-    }
-    else throw exception("Wrong input");
 }
 
-void Parser::T(Node& n)
+void Parser::Type(Node& n)
 {
-    if(isNumber(lexeme))
+    if(lexeme == "int")
     {
-        // T -> num
+        // Type -> int
+        n.addSon("int");
+        getLexeme();
+    }
+}
+
+void Parser::Var(Node& n)
+{
+    if(isWord(lexeme))
+    {
+        // Var -> Id
+        n.addSon("Id");
+        Id(n.children[0]);
+    }
+}
+
+void Parser::Return(Node& n)
+{
+    if(isWord(lexeme))
+    {
+        // Return -> Id
+        n.addSon("Id");
+        Id(n.children[0]);
+    }
+}
+
+void Parser::Id(Node& n)
+{
+    if(isWord(lexeme))
+    {
+        // Id -> id_name
         n.addSon(lexeme);
         getLexeme();
     }
-    else throw exception("Wrong input");
 }
 
 Node Parser::parse()
 {
-    Node root("S");
+    Node root("Function");
     getLexeme();
-    S(root);
+    Function(root);
     if(lexeme != "#")
         throw exception("Wrong input");
     return root;

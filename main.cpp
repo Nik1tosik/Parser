@@ -8,9 +8,9 @@ using namespace std;
 
 int main()
 {
-	string code = "2+3+23+123";
+	string code = "Function int function_name return_value";
 	Parser parcer(code);
 
 	Node root = parcer.parse();
-	root.print(1);
+	root.print(4);
 }

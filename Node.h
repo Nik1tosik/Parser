@@ -15,5 +15,4 @@ struct Node
 	void addSon(string data) { children.push_back(Node(data)); }
 
 	void print(int lvl);
-	double evaluate(double x);
 };
